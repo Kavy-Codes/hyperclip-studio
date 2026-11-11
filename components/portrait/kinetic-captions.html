@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="assets/gsap.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Poppins';
+      src: url('assets/fonts/Poppins-Black.ttf') format('truetype');
+      font-weight: 900;
+      font-style: normal;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: transparent;
+    }
+    #kinetic-captions {
+      position: absolute;
+      inset: 0;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      pointer-events: none;
+      font-family: 'Poppins', sans-serif;
+    }
+    .cue {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 1340px; /* Safe lower-third reading zone */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transform-origin: center center;
+    }
+    .cue-inner {
+      display: inline-block;
+      max-width: 980px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 74px;
+      line-height: 1.14;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      text-align: center;
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.9));
+    }
+    .hl-white {
+      color: #FFFFFF;
+      -webkit-text-stroke: 10px #000000;
+      paint-order: stroke fill;
+    }
+    .hl-green {
+      color: #39FF14 !important;
+      -webkit-text-stroke: 10px #000000;
+      paint-order: stroke fill;
+      filter: drop-shadow(0 0 22px rgba(57, 255, 20, 0.85));
+    }
+    .hl-yellow {
+      color: #FFE600 !important;
+      -webkit-text-stroke: 10px #000000;
+      paint-order: stroke fill;
+      filter: drop-shadow(0 0 22px rgba(255, 230, 0, 0.85));
+    }
+    .hl-red {
+      color: #FF3366 !important;
+      -webkit-text-stroke: 10px #000000;
+      paint-order: stroke fill;
+      filter: drop-shadow(0 0 22px rgba(255, 51, 102, 0.85));
+    }
+  </style>
+</head>
+<body>
+  <div id="kinetic-captions" data-composition-id="kinetic-captions" data-start="0" data-duration="8" data-width="1080" data-height="1920">
+    <div class="cue" id="cue-preview">
+      <div class="cue-inner" data-slot="captions">
+        <span class="hl-white">NINE</span> <span class="hl-green">FIGURE</span> <span class="hl-yellow">DAYS</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo('#cue-preview', 
+      { autoAlpha: 0, scale: 0.82 }, 
+      { autoAlpha: 1, scale: 1, duration: 0.12, ease: 'back.out(2.5)' }, 
+      0
+    );
+    tl.set('#cue-preview', { autoAlpha: 0 }, 8);
+    window.__timelines['kinetic-captions'] = tl;
+  </script>
+</body>
+</html>

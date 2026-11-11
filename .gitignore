@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Local Whisper ASR build & models
+tools/whisper.cpp/
+.home/
+
+# Video renders & working media
+exports/*.mp4
+exports/*.mov
+exports/*.mkv
+INBOX/*.mp4
+INBOX/*.mov
+INBOX/*.mkv
+INBOX/*.webm
+source/*.mp4
+source/*.mov
+projects/*/.preview/
+projects/*/renders/
+projects/*/*.mp4
+
+# Retain demo assets
+!projects/demo/assets/working.mp4
+!projects/demo/assets/gsap.min.js
+!projects/demo/assets/audio/music_bed.m4a
+!projects/demo/assets/audio/whoosh.mp3
+
+# Retain directory structure
+!.gitkeep
+
+# Logs & temp
+*.log
+.DS_Store
+.env

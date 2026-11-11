@@ -1,0 +1,112 @@
+{
+  "components": [
+    {
+      "id": "ambient-bg",
+      "title": "Ambient background",
+      "type": "block",
+      "file": "portrait/ambient-bg.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": [],
+      "tags": ["background", "portrait", "ambient", "grain"],
+      "description": "Dark gradient, grid, grain and vignette. A safe always-on base for a portrait clip."
+    },
+    {
+      "id": "hook",
+      "title": "Hook block",
+      "type": "block",
+      "file": "portrait/hook.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": ["kicker", "hook", "sub"],
+      "tags": ["hook", "opening", "portrait", "text"],
+      "description": "Kicker, large hook and one line of context in the phone-safe top zone."
+    },
+    {
+      "id": "payoff",
+      "title": "Payoff card",
+      "type": "block",
+      "file": "portrait/payoff.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": ["payoff", "caption"],
+      "tags": ["payoff", "caption", "portrait", "card"],
+      "description": "A framed payoff card with one exact spoken caption below it."
+    },
+    {
+      "id": "caption",
+      "title": "Caption bar",
+      "type": "block",
+      "file": "portrait/caption.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": ["caption"],
+      "tags": ["caption", "subtitles", "portrait"],
+      "description": "A single readable caption block with a left accent bar, placed above social UI."
+    },
+    {
+      "id": "stat",
+      "title": "Stat block",
+      "type": "block",
+      "file": "portrait/stat.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": ["number", "label", "source"],
+      "tags": ["stat", "number", "evidence", "portrait"],
+      "description": "Large number, short label and source line for a single evidence beat."
+    },
+    {
+      "id": "cta",
+      "title": "CTA block",
+      "type": "block",
+      "file": "portrait/cta.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": ["cta", "handle"],
+      "tags": ["cta", "outro", "portrait"],
+      "description": "A quiet pill CTA and handle, kept clear of the bottom social UI."
+    },
+    {
+      "id": "lower-third",
+      "title": "Lower third",
+      "type": "block",
+      "file": "portrait/lower-third.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": ["name", "role"],
+      "tags": ["lower-third", "name", "portrait", "interview"],
+      "description": "Name and role for an interview or guest clip."
+    },
+    {
+      "id": "card-16x9-in-9x16",
+      "title": "16:9 card adapter for 9:16",
+      "type": "adapter",
+      "file": "adapters/card-16x9-in-9x16.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": ["card"],
+      "tags": ["adapter", "card", "portrait", "style-library"],
+      "description": "Scales a 1920x1080 style-library card into a centered 1080x608 panel for a Short."
+    },
+    {
+      "id": "kinetic-captions",
+      "title": "Kinetic Poppins Captions",
+      "type": "block",
+      "file": "portrait/kinetic-captions.html",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8,
+      "slots": ["captions"],
+      "tags": ["captions", "kinetic", "subtitles", "poppins", "portrait", "high-retention"],
+      "description": "High-retention Poppins Black all-caps kinetic typography with phone-safe lower-third anchoring, 10px black stroke, drop shadow, and neon highlight tagging."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    #caption{position:absolute;inset:0;width:1080px;height:1920px;overflow:hidden;pointer-events:none;color:#f4f1ea;font-family:Inter,Arial,sans-serif}
+    #caption .wrap{position:absolute;left:90px;right:150px;bottom:330px}
+    #caption .text{font-size:38px;line-height:1.32;font-weight:600;max-width:840px;border-left:5px solid #b9f27c;padding-left:24px;text-shadow:0 3px 18px rgba(0,0,0,.55)}
+  </style>
+</head>
+<body>
+  <div id="caption" data-composition-id="caption" data-start="0" data-duration="8" data-width="1080" data-height="1920">
+    <div class="wrap">
+      <div class="text" data-slot="caption">Exact spoken words go here.</div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    tl.from('#caption .text', { autoAlpha: 0, y: 18, duration: .35, ease: 'power2.out' }, 0);
+    tl.set({}, {}, 8);
+    window.__timelines['caption'] = tl;
+  </script>
+</body>
+</html>

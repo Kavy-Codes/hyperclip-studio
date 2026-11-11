@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    #cta{position:absolute;inset:0;width:1080px;height:1920px;overflow:hidden;pointer-events:none;color:#f4f1ea;font-family:Inter,Arial,sans-serif}
+    #cta .wrap{position:absolute;left:90px;right:150px;bottom:330px;display:flex;flex-direction:column;align-items:flex-start;gap:18px}
+    #cta .pill{display:inline-block;padding:18px 28px;border:1px solid rgba(185,242,124,.45);background:rgba(17,26,26,.86);border-radius:999px;font-size:30px;line-height:1.2;color:#e9efe9}
+    #cta .handle{font:20px "Courier New",monospace;letter-spacing:3px;color:#7f8d86;text-transform:uppercase}
+  </style>
+</head>
+<body>
+  <div id="cta" data-composition-id="cta" data-start="0" data-duration="8" data-width="1080" data-height="1920">
+    <div class="wrap">
+      <div class="pill" data-slot="cta">Follow for more.</div>
+      <div class="handle" data-slot="handle">@yourhandle</div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    tl.from('#cta .pill', { autoAlpha: 0, y: 18, duration: .5, ease: 'power2.out' }, 0);
+    tl.from('#cta .handle', { autoAlpha: 0, duration: .4 }, .25);
+    tl.set({}, {}, 8);
+    window.__timelines['cta'] = tl;
+  </script>
+</body>
+</html>

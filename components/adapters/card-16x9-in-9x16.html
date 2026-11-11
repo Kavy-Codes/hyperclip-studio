@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    #card-adapter{position:absolute;inset:0;width:1080px;height:1920px;overflow:hidden;background:transparent;color:#f4f1ea;font-family:Inter,Arial,sans-serif;pointer-events:none}
+    #card-adapter .panel{position:absolute;left:0;top:656px;width:1080px;height:608px;overflow:hidden;border-top:1px solid rgba(185,242,124,.24);border-bottom:1px solid rgba(185,242,124,.24);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+    #card-adapter .card{position:absolute;left:0;top:0;width:1920px;height:1080px;transform:scale(0.5625);transform-origin:top left}
+  </style>
+</head>
+<body>
+  <div id="card-adapter" data-composition-id="{{ADAPTER_ID}}" data-start="0" data-duration="{{DURATION}}" data-width="1080" data-height="1920">
+    <div class="panel">
+      <div
+        id="card-adapter-card"
+        class="card"
+        data-layout-allow-overflow
+        data-composition-id="{{CARD_ID}}"
+        data-composition-src="compositions/{{CARD_FILE}}"
+        data-start="0"
+        data-duration="{{DURATION}}"
+        data-track-index="1"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    tl.from('#card-adapter .panel', { autoAlpha: 0, y: 18, duration: .5, ease: 'power2.out' }, 0);
+    tl.set({}, {}, {{DURATION}});
+    window.__timelines['{{ADAPTER_ID}}'] = tl;
+  </script>
+</body>
+</html>

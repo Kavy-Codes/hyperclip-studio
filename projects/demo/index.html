@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>HyperClip Demo</title>
+  <script src="assets/gsap.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: #080c12;
+      color: #f4f1ea;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #clip {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: #080c12;
+    }
+    #footage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #000;
+    }
+    #source-video {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1080px;
+      height: 1920px;
+      object-fit: cover;
+    }
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      background-image: 
+        linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.8) 100%);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div data-hf-id="hf-root" id="clip" data-composition-id="demo" data-duration="5.0" data-width="1080" data-height="1920" data-has-footage="true">
+    <!-- FOOTAGE -->
+    <div data-hf-id="hf-foot" id="footage">
+      <video data-hf-id="hf-vid" id="source-video" data-start="0" data-duration="5.0" data-track-index="1" src="assets/working.mp4" muted playsinline></video>
+      <div data-hf-id="hf-grid" class="grid-bg"></div>
+      <div data-hf-id="hf-vign" class="vignette"></div>
+    </div>
+    <audio data-hf-id="hf-srcaud" id="source-audio" data-start="0" data-duration="5.0" data-track-index="8" data-volume="0.8" src="assets/working.mp4"></audio>
+
+    <!-- AUDIO & SFX -->
+    <audio data-hf-id="hf-mus" id="audio-music" data-start="0" data-duration="5.0" data-track-index="9" data-volume="0.15" src="assets/audio/music_bed.m4a"></audio>
+    <audio data-hf-id="hf-sfx" id="audio-sfx" data-start="0.5" data-duration="0.8" data-track-index="10" data-volume="0.6" src="assets/audio/whoosh.mp3"></audio>
+
+    <!-- OVERLAYS -->
+    <div data-hf-id="hf-ov" id="overlays" data-composition-id="overlays" data-composition-src="compositions/overlays.html" data-start="0" data-duration="5.0" data-track-index="5" data-width="1080" data-height="1920"></div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    
+    // Dynamic camera subtle zoom
+    tl.fromTo('#source-video', { scale: 1.0 }, { scale: 1.05, duration: 5.0, ease: 'none' }, 0);
+
+    // Audio fade out at end
+    tl.to('#audio-music', { volume: 0, duration: 0.8 }, 4.2);
+    tl.to('#source-audio', { volume: 0, duration: 0.8 }, 4.2);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['demo'] = tl;
+  </script>
+</body>
+</html>
