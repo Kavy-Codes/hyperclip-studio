@@ -1,0 +1,1 @@
+/home/hypruser/CLIP/preview.sh

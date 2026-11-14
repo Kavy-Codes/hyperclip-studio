@@ -22,13 +22,15 @@ Built from the ground up to pair seamlessly with **AI coding assistants** (Claud
 ## ✨ Features
 
 - 🚀 **100% Code-Driven Editing**: Animate text, cameras, badges, charts, and b-roll using modern web technologies and GSAP timelines.
-- ⚡ **AI-Native Headless Preview Engine**: Generate multi-frame contact sheets and fractional previews (`1/8`, `1/4`, `1/2`, `1`) in 3–5 seconds without human GUI overhead.
+- ⚡ **AI-Native Preview & Live Studio**: Generate multi-frame contact sheets and fractional previews (`1/8`, `1/4`, `1/2`, `1`) in 3–5 seconds, plus an interactive live preview app (`./preview.sh`).
+- 🔮 **Pure Optical Rotoscoping Engine**: Place 3D typography behind subjects' heads with 4-tier neon bloom (`./scripts/roto-text.sh`) with zero double-vision or decoder drift.
+- 💬 **Creator Kinetic Captions**: High-retention word-by-word tracking with scale-bounce pop, intelligent keyword saliency scoring, and electric yellow / crimson highlights.
 - 🎙️ **Local Whisper Speech Recognition**: Zero-cost, 100% private word-level transcription and automatic animated caption synchronization powered by local `whisper.cpp`.
 - ✂️ **Automatic Silence Cutting**: Intelligently detects and cuts pauses and filler silence using FFmpeg `silencedetect`.
-- 🔊 **Built-in Sound Effects Library**: 40+ curated studio SFX (whooshes, risers, mechanical clicks, camera shutters, deep sub-drops, dramatic impacts).
+- 🔊 **Broadcast Audio Engine & Inferred Foley**: Automatically infer frame-exact SFX cues from transcripts and mix voice (-14.6 LUFS), sidechain-ducked music (-38 LUFS), and aligned SFX (-17 dBFS) via `./scripts/mix-sound.sh`.
 - 🎨 **456+ Visual Component Registry**: Instant search and insertion of production-ready motion graphics, stat callouts, badges, and templates (`scripts/search-registry.sh`).
 - 🛡️ **5-Stage QA Check Suite**: Comprehensive validation checks for lint errors, runtime exceptions, layout overflow, motion timing, and text contrast.
-- 🎚️ **EBU R128 Loudness Normalization**: Automated broadcast audio normalization (`-16 LUFS`) for optimal loudness on mobile platforms.
+- 👤 **Subject Face Sanctuary Guarantee**: Built-in rules enforcing pristine chin and face headroom (`Y: 150px–850px` clean) across vertical edits.
 
 ---
 
@@ -109,25 +111,31 @@ The finished video will be saved to `exports/<slug>-<timestamp>.mp4`!
 hyperclip-studio/
 ├── install.sh                  # One-step automated installer
 ├── edit.sh                     # Fast-path CLI: ./edit.sh "/path/to/video.mp4"
+├── preview.sh & preview.html   # Instant multi-resolution studio preview engine
 ├── package.json                # Pinned HyperFrames (0.7.109), GSAP, Playwright
 ├── README.md                   # Complete documentation
 ├── AGENTS.md                   # Operating guide for AI pair programmers
 ├── LICENSE                     # MIT License
-├── .gitignore                  # Clean repository filters
+├── .gitignore & .gitattributes # Clean repository filters & line-ending normalization
 ├── scripts/                    # Studio CLI & Automation Tools:
+│   ├── roto-text.sh & .py      # Pure optical rotoscoping (3D text behind subject)
+│   ├── infer-cues.py           # Automated narrative Foley & punchline cue detection
+│   ├── mix-sound.sh            # EBU R128 voice (-14.6 LUFS) & ducked music (-38 LUFS)
 │   ├── ai-preview.sh & .mjs    # AI headless preview engine
-│   ├── new-edit.sh             # Video intake & pipeline manager
-│   ├── render-clip.sh          # Low-memory, single-worker renderer
+│   ├── user-preview.mjs        # Proportional multi-resolution preview server
+│   ├── make-captions.mjs & .sh # Creator Kinetic Captions with word-level pop
+│   ├── import-footage.mjs & .sh# Ingestion with 1.0s GOPs & proxy generation
+│   ├── new-edit.sh & quick-edit# Video intake & end-to-end pipeline managers
 │   ├── check-clip.sh           # 5-stage validation check suite
+│   ├── render-clip.sh          # Low-memory, single-worker renderer
 │   ├── setup-asr.sh            # Local Whisper.cpp speech setup
 │   ├── add-card.sh             # Inject style-library cards
 │   ├── add-component.sh        # Inject HyperFrames UI components
-│   ├── add-audio.sh            # Sound design & SFX track mixer
 │   ├── search-registry.sh      # Local 456-component search engine
 │   └── doctor.sh               # System diagnostic tool
 ├── sfx/                        # Curated studio sound effects (whooshes, hits, risers)
 ├── components/                 # Reusable UI overlays & motion elements
-├── templates/                  # Base portrait & landscape project templates
+├── templates/                  # Base portrait (v1, v2) & landscape project templates
 ├── recipes/                    # Motion graphics recipe definitions
 ├── registry.json & REGISTRY.md # 456-item official HyperFrames catalog index
 ├── vendor/herk-edit-kit/       # Style library, motion cards & templates

@@ -2,91 +2,72 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+KIT="$ROOT/vendor/herk-edit-kit"
 
-echo "================================================="
-echo " HyperClip Studio — System Diagnostics"
-echo "================================================="
-
-ERRORS=0
-
-check_cmd() {
-  local name="$1"
-  local cmd="$2"
-  if command -v "$cmd" >/dev/null 2>&1; then
-    local ver
-    ver="$($cmd --version 2>&1 | head -n 1 || true)"
-    echo "  ✓ $name: $ver"
-  else
-    echo "  ✗ $name: NOT FOUND ($cmd)"
-    ERRORS=$((ERRORS + 1))
-  fi
-}
-
+echo "=== HyperFrames Studio Doctor ==="
 echo
-echo "1. System Binaries:"
-check_cmd "Node.js" "node"
-check_cmd "NPM" "npm"
-check_cmd "FFmpeg" "ffmpeg"
-check_cmd "FFprobe" "ffprobe"
-check_cmd "Git" "git"
-check_cmd "CMake" "cmake"
 
-echo
-echo "2. Local Whisper ASR Engine:"
-if [[ -f "$ROOT/tools/asr.json" ]]; then
-  echo "  ✓ asr.json configuration present"
-  ASR_BIN="$(grep '"whisper"' "$ROOT/tools/asr.json" | cut -d'"' -f4 || true)"
-  ASR_MODEL="$(grep '"model"' "$ROOT/tools/asr.json" | cut -d'"' -f4 || true)"
-  if [[ -x "$ASR_BIN" ]]; then
-    echo "  ✓ whisper-cli: $ASR_BIN"
-  else
-    echo "  ✗ whisper-cli not executable: $ASR_BIN"
-    ERRORS=$((ERRORS + 1))
-  fi
-  if [[ -f "$ASR_MODEL" ]]; then
-    echo "  ✓ Speech model: $ASR_MODEL"
-  else
-    echo "  ✗ Speech model missing: $ASR_MODEL"
-    ERRORS=$((ERRORS + 1))
-  fi
-else
-  echo "  ⚠ Local Whisper not configured yet. Run: ./scripts/setup-asr.sh base.en"
+if [[ ! -d "$KIT" ]]; then
+  echo "[FAIL] Herk Edit Kit is missing. Extract it into STUDIO/vendor/herk-edit-kit." >&2
+  exit 1
 fi
 
+echo "--- 1. HyperFrames Core Health ---"
+cd "$KIT"
+npx hyperframes doctor
 echo
-echo "3. HyperFrames & Motion Engine:"
-cd "$ROOT"
-if [[ -d "$ROOT/node_modules/hyperframes" ]]; then
-  HF_VER="$(npx hyperframes --version 2>&1 || true)"
-  echo "  ✓ HyperFrames CLI: $HF_VER"
-  npx hyperframes doctor 2>&1 | sed 's/^/    /' || true
-elif [[ -d "$ROOT/vendor/herk-edit-kit/node_modules/hyperframes" ]]; then
-  cd "$ROOT/vendor/herk-edit-kit"
-  HF_VER="$(npx hyperframes --version 2>&1 || true)"
-  echo "  ✓ HyperFrames CLI (vendored): $HF_VER"
-  npx hyperframes doctor 2>&1 | sed 's/^/    /' || true
-else
-  echo "  ✗ HyperFrames not installed. Run: npm install"
-  ERRORS=$((ERRORS + 1))
-fi
 
-echo
-echo "4. Studio Assets & SFX Library:"
-SFX_COUNT="$(find "$ROOT/sfx" -type f \( -name '*.mp3' -o -name '*.wav' -o -name '*.m4a' \) 2>/dev/null | wc -l)"
-echo "  ✓ Sound Effects: $SFX_COUNT audio files found in sfx/"
-
+echo "--- 2. Studio Visual Asset Registries ---"
 if [[ -f "$ROOT/registry.json" ]]; then
-  echo "  ✓ Component Registry: registry.json (456 visual components available)"
+  REG_COUNT=$(node -e "const d=require('$ROOT/registry.json'); console.log(Array.isArray(d)?d.length:Object.keys(d.items||d).length)" 2>/dev/null || echo "ok")
+  echo "[OK] HyperFrames Online Registry indexed: $REG_COUNT items ($ROOT/registry.json)"
 else
-  echo "  ⚠ registry.json missing"
+  echo "[WARN] HyperFrames registry.json missing. Run registry sync."
 fi
 
+if [[ -f "$ROOT/catalog.json" ]]; then
+  CAT_COUNT=$(node -e "const d=require('$ROOT/catalog.json'); console.log(Array.isArray(d)?d.length:Object.keys(d.cards||d).length)" 2>/dev/null || echo "ok")
+  echo "[OK] Herk Style Catalog indexed: $CAT_COUNT cards ($ROOT/catalog.json)"
+else
+  echo "[WARN] Herk catalog.json missing."
+fi
+
+if [[ -x "$ROOT/scripts/find-visual.sh" ]]; then
+  echo "[OK] Unified Visual Search Tool ready ($ROOT/scripts/find-visual.sh)"
+else
+  echo "[WARN] find-visual.sh missing or not executable."
+fi
 echo
-echo "-------------------------------------------------"
-if [[ $ERRORS -eq 0 ]]; then
-  echo " Result: ALL CHECKS PASSED. Studio is ready to edit!"
-else
-  echo " Result: $ERRORS issue(s) detected. Please check above."
-fi
-echo "================================================="
 
+echo "--- 3. Studio Typography & Design Assets ---"
+FONT_DIR="$ROOT/assets/fonts"
+if [[ -d "$FONT_DIR" && -f "$FONT_DIR/Poppins-Bold.ttf" ]]; then
+  FONT_COUNT=$(find "$FONT_DIR" -name "*.ttf" | wc -l)
+  echo "[OK] Creator Fonts ready ($FONT_COUNT fonts, Poppins-Bold active in $FONT_DIR)"
+else
+  echo "[WARN] Poppins-Bold.ttf missing in $FONT_DIR."
+fi
+echo
+
+echo "--- 4. Local ASR (Whisper) ---"
+WHISPER_BIN="$ROOT/tools/whisper.cpp/build/bin/whisper-cli"
+MODEL_BIN="$ROOT/tools/whisper.cpp/models/ggml-base.en.bin"
+if [[ -x "$WHISPER_BIN" && -f "$MODEL_BIN" ]]; then
+  echo "[OK] Local Whisper ASR engine ready (base.en)"
+elif [[ -x "$ROOT/tools/whisper.cpp/main" ]]; then
+  echo "[OK] Local Whisper ASR engine ready"
+else
+  echo "[INFO] Local whisper engine not compiled. Run: STUDIO/scripts/setup-asr.sh base.en"
+fi
+echo "--- 5. Edit-Kit Suite & Sound Engine ---"
+if [[ -d "$ROOT/Edit-Kit" ]]; then
+  SKILL_COUNT=$(find "$ROOT/Edit-Kit/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)
+  echo "[OK] Edit-Kit suite ready ($SKILL_COUNT skills at $ROOT/Edit-Kit)"
+  if [[ -x "$ROOT/scripts/mix-sound.sh" ]]; then
+    echo "[OK] Broadcast sound mixing engine active ($ROOT/scripts/mix-sound.sh)"
+  fi
+else
+  echo "[WARN] Edit-Kit missing at $ROOT/Edit-Kit"
+fi
+echo
+echo "=== Doctor check complete ==="

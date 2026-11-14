@@ -239,30 +239,52 @@ async function main() {
   const targetW = Math.round(compInfo.width * options.scale);
   const targetH = Math.round(compInfo.height * options.scale);
 
+  // Ensure all videos have loaded data
+  await page.evaluate(async () => {
+    const vids = Array.from(document.querySelectorAll('video'));
+    await Promise.all(vids.map(v => {
+      if (v.readyState >= 2) return Promise.resolve();
+      return new Promise(res => {
+        v.addEventListener('loadeddata', () => res(), { once: true });
+        v.addEventListener('canplay', () => res(), { once: true });
+        setTimeout(res, 2500);
+      });
+    }));
+  });
+
   const capturedFrames = [];
 
   for (const time of timestamps) {
     const safeTime = Math.max(0, time);
     // Seek timeline & media in browser
     await page.evaluate(async (t) => {
-      // 1. Seek HyperFrames player
+      // 1. Seek video elements and await frame readiness
+      const vids = Array.from(document.querySelectorAll('video'));
+      await Promise.all(vids.map(v => new Promise(res => {
+        const onDone = () => {
+          // If browser supports requestVideoFrameCallback, wait 1 frame
+          if ('requestVideoFrameCallback' in v) {
+            v.requestVideoFrameCallback(() => res());
+          } else {
+            setTimeout(res, 80);
+          }
+        };
+        if (Math.abs(v.currentTime - t) < 0.03 && v.readyState >= 2) return onDone();
+        v.addEventListener('seeked', onDone, { once: true });
+        v.currentTime = t;
+        setTimeout(res, 1200); // Generous fallback for slow decoding
+      })));
+
+      // 2. Seek HyperFrames player
       if (window.__player && typeof window.__player.seek === 'function') {
         window.__player.seek(t);
       }
-      // 2. Fallback seek all registered timelines
+      // 3. Fallback seek all registered timelines
       if (window.__timelines) {
         for (const k of Object.keys(window.__timelines)) {
           window.__timelines[k].seek(t).pause();
         }
       }
-      // 3. Seek video elements and await frame readiness
-      const vids = Array.from(document.querySelectorAll('video'));
-      await Promise.all(vids.map(v => new Promise(res => {
-        if (Math.abs(v.currentTime - t) < 0.05 && v.readyState >= 2) return res();
-        v.addEventListener('seeked', () => res(), { once: true });
-        v.currentTime = t;
-        setTimeout(res, 500); // Safety fallback
-      })));
       // 4. Tick GSAP ticker
       if (window.gsap && window.gsap.ticker) {
         window.gsap.ticker.tick();
@@ -272,8 +294,8 @@ async function main() {
       }
     }, safeTime);
 
-    // Short wait for composite flush
-    await page.waitForTimeout(60);
+    // Wait for composite flush
+    await page.waitForTimeout(150);
 
     // Save initial master shot to temp buffer/file
     const rawPath = join(outDir, `_raw_${safeTime}s.jpg`);

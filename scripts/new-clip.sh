@@ -76,7 +76,14 @@ esac
 }
 
 DEST="$ROOT/projects/$SLUG"
-TEMPLATE="$ROOT/templates/clip-$FORMAT"
+if [[ "$FORMAT" == "portrait" ]]; then
+  WIDTH=1080; HEIGHT=1920
+  TEMPLATE="$ROOT/templates/clip-portrait-v2"
+  [[ -d "$TEMPLATE" ]] || TEMPLATE="$ROOT/templates/clip-portrait"
+else
+  WIDTH=1920; HEIGHT=1080
+  TEMPLATE="$ROOT/templates/clip-landscape"
+fi
 
 [[ -d "$TEMPLATE" ]] || { echo "Missing template: $TEMPLATE" >&2; exit 1; }
 [[ ! -e "$DEST" ]] || { echo "Project already exists: $DEST" >&2; exit 1; }
@@ -88,12 +95,6 @@ TEMPLATE="$ROOT/templates/clip-$FORMAT"
 cp -R "$TEMPLATE/." "$DEST"
 mkdir -p "$DEST/assets" "$DEST/compositions" "$DEST/renders"
 cp "$KIT/node_modules/gsap/dist/gsap.min.js" "$DEST/assets/gsap.min.js"
-
-if [[ "$FORMAT" == "portrait" ]]; then
-  WIDTH=1080; HEIGHT=1920
-else
-  WIDTH=1920; HEIGHT=1080
-fi
 
 [[ -n "$TITLE" ]] || TITLE="$SLUG"
 export SLUG TITLE CHANNEL SOURCE FORMAT WIDTH HEIGHT DURATION

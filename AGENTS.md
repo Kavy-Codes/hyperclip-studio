@@ -25,26 +25,35 @@ HyperClip Studio is a **code-first, browser-rendered video editing studio** buil
 
 1. **Pinned HyperFrames CLI (`0.7.109`)**:
    Always run through `npm` / `npx hyperframes` (which resolves `0.7.109`). Never install or run `@latest`.
-2. **Three-Tier Safe Zones (1080x1920 Vertical)**:
-   * **Tier 1 (Face Sanctuary: Y=150–850px)**: Kept 100% clear of graphic cards, badges, and stickers.
-   * **Tier 2 (Graphic Desk: Y=960–1200px)**: Anchors all overlay cards, metric chips, and badges. Positioned directly above captions.
-   * **Tier 3 (Caption Anchor: Y=1340–1650px)**: Reserved for word-level kinetic captions.
-3. **GSAP Owns Transforms**:
+2. **Subject Face Sanctuary Guarantee (1080x1920 Vertical)**:
+   * **Tier 1 (Face Sanctuary: Y=150–850px)**: Kept 100% clear of graphic cards, badges, and stickers. Never place headers or cards across chin, beard, or eyes.
+   * **Tier 2 (Graphic Desk: Y=920–1200px)**: Anchors all overlay cards, metric chips, and badges. Positioned safely below chin.
+   * **Tier 3 (Caption Anchor: bottom: 340px / Y=1520–1560px)**: Reserved for word-level kinetic captions to clear microphones.
+3. **Pure Optical Rotoscoping (`./scripts/roto-text.sh <slug>`)**:
+   Never place duplicate `<video>` or cutout overlay elements in the HTML DOM (causes asynchronous decoder drift and severe double vision). Use `./scripts/roto-text.sh` to bake pure optical occlusion (`visible = text * (1.0 - mask)`) directly into `working.mp4` with 4-tier cinematic neon bloom.
+4. **Keyframe-Dense Ingestion Standard (`-g 30 -keyint_min 30`)**:
+   Always enforce 1.0s GOP keyframe intervals on `working.mp4` and preview proxies to eliminate seek stalls in headless Chrome.
+5. **Broadcast Audio Standards (`./scripts/mix-sound.sh <slug>`)**:
+   Mix dialogue to `-14.6 LUFS`, music bed sidechain-ducked to `-38 LUFS` under voice, and SFX transients aligned at `-17 dBFS`. Use `infer-cues.py` for automated narrative Foley.
+6. **Creator Kinetic Captions (`./scripts/make-captions.sh <slug>`)**:
+   Uses Poppins Bold, uppercase, heavy stroke, and electric yellow (`#ffe600`) keyword highlights with active word scale pops (`back.out(2.5)`). Captions must remain continuous during speech; never gate with `hide: HIDE`.
+7. **GSAP Owns Transforms**:
    Do **NOT** set CSS `transform` on any element animated by a GSAP tween. Let GSAP manage transforms via `tl.fromTo()` or `tl.to()`.
-4. **Root-Relative Asset Paths**:
+8. **Root-Relative Asset Paths**:
    In sub-compositions (`compositions/overlays.html`, `compositions/captions.html`), all asset paths must be root-relative (`assets/...`, NOT `../assets/...`).
-5. **Timeline Registration**:
+9. **Timeline Registration**:
    Ensure `data-composition-id`, `meta.json` `id`, and `window.__timelines[...]` keys match identically.
-6. **Track Allocation (Collision-Free Audio & Video)**:
-   * `Track 0`: Background grain / backdrop
-   * `Track 1`: Source video footage
-   * `Track 5`: Overlay graphics (`overlays.html`)
-   * `Track 6`: Captions (`captions.html`)
-   * `Track 8`: Primary dialogue (`source-audio`)
-   * `Track 9`: Music bed
-   * `Track 10`: SFX whooshes & hits
-   * `Track 11`: SFX clicks & risers
-   * `Track 12`: SFX impacts & sub-drops
+10. **Track Allocation (Collision-Free Audio & Video)**:
+    * `Track 0`: Background grain / backdrop
+    * `Track 1`: Source video footage
+    * `Track 5`: Overlay graphics (`overlays.html`)
+    * `Track 6`: Captions (`captions.html`)
+    * `Track 8`: Broadcast master audio stem (`mix.wav`)
+    * `Track 9`: Music bed
+    * `Track 10`: SFX whooshes & hits
+    * `Track 11`: SFX clicks & risers
+    * `Track 12`: SFX impacts & sub-drops
+
 
 ---
 

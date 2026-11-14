@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview: podcast-5</title>
+  <style>
+    :root {
+      --bg: #090b10;
+      --panel: #11151f;
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #ffe600;
+      --blue: #3b82f6;
+      --green: #10b981;
+      --red: #ef4444;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge {
+      background: #232a3b;
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    h1 { font-size: 18px; font-weight: 700; }
+    
+    .res-bar {
+      display: flex;
+      background: #0d1017;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .res-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .res-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+    .res-btn.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .viewer-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .frame-container {
+      width: 360px;
+      height: 640px;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+    .frame-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .hud-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--accent);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Timeline beats buttons */
+    .beats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      width: 100%;
+    }
+    .beat-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .beat-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .beat-btn.active {
+      border-color: var(--accent);
+      background: rgba(255, 230, 0, 0.08);
+    }
+    .beat-time {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: monospace;
+    }
+    .beat-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .beat-desc {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Audio section */
+    .audio-card {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .audio-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .pill {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .pill.green { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    /* Contact sheet */
+    .contact-sheet-wrap {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .contact-sheet-img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .cmd-box {
+      background: #0d1017;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border);
+      width: 100%;
+    }
+    .copy-btn {
+      background: #232a3b;
+      border: none;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .copy-btn:hover { background: var(--blue); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="badge">HyperFrames</div>
+      <h1>Project Preview: <code>podcast-5</code></h1>
+    </div>
+    <div class="res-bar">
+      <button class="res-btn" onclick="setRes('1/8')">1/8 (Fast)</button>
+      <button class="res-btn active" onclick="setRes('1/4')">1/4 (Standard)</button>
+      <button class="res-btn" onclick="setRes('1/2')">1/2 (HD)</button>
+      <button class="res-btn" onclick="setRes('1')">1.0 (Full 1080p)</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="viewer-card">
+      <div class="frame-container">
+        <img id="main-frame" class="frame-img" src="" alt="Frame Preview">
+        <div class="hud-overlay" id="hud-txt">2.4s · 1/4 (270x480)</div>
+      </div>
+    </div>
+
+    <!-- Timeline Beats Selector -->
+    <div class="beats-grid" id="beats-container"></div>
+
+    <!-- Audio Player -->
+    <div class="audio-card">
+      <div class="audio-meta">
+        <div>
+          <div style="font-weight: 700; font-size: 14px;">Broadcast Master Audio Stem</div>
+          <div style="font-size: 12px; color: var(--muted);">mix.wav (Voice DSP + Ducked Bed + SFX)</div>
+        </div>
+        <div class="pill green">-14.6 LUFS (Broadcast Match)</div>
+      </div>
+      <audio controls src="STUDIO/projects/podcast-5/assets/audio/mix.wav" style="height: 38px;"></audio>
+    </div>
+
+    <!-- Contact Sheet -->
+    <div class="contact-sheet-wrap">
+      <h3 style="font-size: 15px; font-weight: 700;">Composite Contact Sheet (Filmstrip Grid)</h3>
+      <img id="cs-img" class="contact-sheet-img" src="" alt="Contact Sheet">
+    </div>
+
+    <!-- One Click Render Command -->
+    <div class="cmd-box">
+      <span>./STUDIO/scripts/render-clip.sh podcast-5 --final</span>
+      <button class="copy-btn" onclick="navigator.clipboard.writeText('./STUDIO/scripts/render-clip.sh podcast-5 --final'); alert('Copied render command to clipboard!');">Copy Command</button>
+    </div>
+  </main>
+
+  <script>
+    const framesData = {
+  "1/4": [
+    {
+      "time": 2.4,
+      "label": "2.4",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-2.4s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-2.4s-1-4.jpg",
+      "size": "21K"
+    },
+    {
+      "time": 4.2,
+      "label": "4.2",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-4.2s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-4.2s-1-4.jpg",
+      "size": "20K"
+    },
+    {
+      "time": 6.4,
+      "label": "6.4",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-6.4s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-6.4s-1-4.jpg",
+      "size": "19K"
+    },
+    {
+      "time": 8.8,
+      "label": "8.8",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-8.8s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-8.8s-1-4.jpg",
+      "size": "19K"
+    },
+    {
+      "time": 11.5,
+      "label": "11.5",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-11.5s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-11.5s-1-4.jpg",
+      "size": "25K"
+    },
+    {
+      "time": 14.9,
+      "label": "14.9",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-14.9s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-14.9s-1-4.jpg",
+      "size": "22K"
+    },
+    {
+      "time": 18.4,
+      "label": "18.4",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-18.4s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-18.4s-1-4.jpg",
+      "size": "19K"
+    },
+    {
+      "time": 21.8,
+      "label": "21.8",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-21.8s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-21.8s-1-4.jpg",
+      "size": "22K"
+    },
+    {
+      "time": 24.8,
+      "label": "24.8",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-24.8s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-24.8s-1-4.jpg",
+      "size": "18K"
+    },
+    {
+      "time": 28.1,
+      "label": "28.1",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-28.1s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-28.1s-1-4.jpg",
+      "size": "23K"
+    },
+    {
+      "time": 31.1,
+      "label": "31.1",
+      "res": "1/4",
+      "width": 270,
+      "height": 480,
+      "file": "frame-31.1s-1-4.jpg",
+      "path": "/home/hypruser/CLIP/STUDIO/projects/podcast-5/.preview/frame-31.1s-1-4.jpg",
+      "size": "23K"
+    }
+  ]
+};
+    const contactSheets = {
+  "1/4": "contact-sheet-1-4.jpg"
+};
+    const beats = [
+  {
+    "t": 2.4,
+    "title": "Beat 1: HOOK",
+    "desc": "1.6s - 3.2s"
+  },
+  {
+    "t": 4.2,
+    "title": "Beat 1B: STEP 1 ACQUISITION",
+    "desc": "3.4s - 4.9s"
+  },
+  {
+    "t": 6.4,
+    "title": "Beat 2: RATE METRIC",
+    "desc": "5.15s - 7.6s"
+  },
+  {
+    "t": 8.8,
+    "title": "Beat 2B: STEP 2 REFINANCE",
+    "desc": "7.8s - 9.7s"
+  },
+  {
+    "t": 11.5,
+    "title": "Beat 3: $25M MANSION & ELECTRIC GOLD SLAM",
+    "desc": "10s - 13s"
+  },
+  {
+    "t": 14.9,
+    "title": "Beat 3B: STEP 3 THE LEVERAGE",
+    "desc": "13.5s - 16.3s"
+  },
+  {
+    "t": 18.4,
+    "title": "Beat 3C: THE WEALTH ENGINE",
+    "desc": "16.6s - 20.2s"
+  },
+  {
+    "t": 21.8,
+    "title": "Beat 4: THE CLIMAX & CRIMSON $0 BESIDE HEAD",
+    "desc": "20.6s - 23.05s"
+  },
+  {
+    "t": 24.8,
+    "title": "Beat 5: GRAHAM REACTION QUESTION",
+    "desc": "23.2s - 26.4s"
+  },
+  {
+    "t": 28.1,
+    "title": "Beat 5B: THE WALL STREET DOGMA",
+    "desc": "26.6s - 29.5s"
+  },
+  {
+    "t": 31.1,
+    "title": "Beat 6: GREG PAYOFF PUNCHLINE",
+    "desc": "29.8s - 32.4s"
+  }
+];
+    let currentRes = '1/4';
+    let currentIdx = 0;
+
+    function setRes(res) {
+      if (!framesData[res]) {
+        alert('Resolution ' + res + ' was not generated in this run. Run with --res all or --res ' + res);
+        return;
+      }
+      currentRes = res;
+      document.querySelectorAll('.res-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.includes(res));
+      });
+      updateFrame();
+      updateContactSheet();
+    }
+
+    function selectBeat(idx) {
+      currentIdx = idx;
+      document.querySelectorAll('.beat-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+      });
+      updateFrame();
+    }
+
+    function updateFrame() {
+      const list = framesData[currentRes] || Object.values(framesData)[0];
+      if (!list || !list[currentIdx]) return;
+      const f = list[currentIdx];
+      document.getElementById('main-frame').src = f.file;
+      document.getElementById('hud-txt').textContent = f.time + 's · ' + currentRes + ' (' + f.width + 'x' + f.height + ')';
+    }
+
+    function updateContactSheet() {
+      const cs = contactSheets[currentRes] || Object.values(contactSheets)[0];
+      if (cs) {
+        document.getElementById('cs-img').src = cs;
+      }
+    }
+
+    function initBeats() {
+      const cont = document.getElementById('beats-container');
+      beats.forEach((b, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'beat-btn' + (idx === 0 ? ' active' : '');
+        btn.onclick = () => selectBeat(idx);
+        btn.innerHTML = '<div class="beat-time">' + b.t + 's</div>' +
+                        '<div class="beat-title">' + b.title + '</div>' +
+                        '<div class="beat-desc">' + b.desc + '</div>';
+        cont.appendChild(btn);
+      });
+    }
+
+    initBeats();
+    setRes(currentRes);
+  </script>
+</body>
+</html>

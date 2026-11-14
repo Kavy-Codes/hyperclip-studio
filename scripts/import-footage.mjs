@@ -99,6 +99,8 @@ if (workingOverride) {
     '-c:v', 'libx264',
     '-preset', 'medium',
     '-crf', '18',
+    '-g', String(format.fps),
+    '-keyint_min', String(format.fps),
     '-pix_fmt', 'yuv420p'
   ];
   if (sourceProbe.audio) {
@@ -111,8 +113,29 @@ if (workingOverride) {
     );
   }
   ffArgs.push('-movflags', '+faststart', workingPath);
-  console.error(`Creating browser-safe proxy -> ${workingPath}`);
+  console.error(`Creating browser-safe proxy (keyframe-dense) -> ${workingPath}`);
   execFileSync('ffmpeg', ffArgs, { stdio: ['ignore', 'inherit', 'inherit'] });
+
+  // Automatically generate fractional proxies for instant live preview (1/2, 1/4, 1/8)
+  const assetsDir = dirname(workingPath);
+  const proxyDefs = [
+    { name: 'working_1_2.mp4', w: Math.round(format.width / 2), h: Math.round(format.height / 2), crf: '24' },
+    { name: 'working_1_4.mp4', w: Math.round(format.width / 4), h: Math.round(format.height / 4), crf: '26' },
+    { name: 'working_1_8.mp4', w: Math.round(format.width / 8), h: Math.round(format.height / 8), crf: '28' }
+  ];
+  for (const p of proxyDefs) {
+    const target = join(assetsDir, p.name);
+    console.error(`Creating preview proxy -> ${p.name}`);
+    execFileSync('ffmpeg', [
+      '-y', '-i', workingPath,
+      '-vf', `scale=${p.w}:${p.h}`,
+      '-c:v', 'libx264', '-preset', 'veryfast', '-crf', p.crf,
+      '-g', String(format.fps), '-keyint_min', String(format.fps),
+      '-c:a', 'copy',
+      '-movflags', '+faststart',
+      target
+    ], { stdio: ['ignore', 'ignore', 'ignore'] });
+  }
 } else {
   console.error(`Copying source without proxy -> ${workingPath}`);
   execFileSync('ffmpeg', ['-y', '-i', sourcePath, '-t', String(finalDuration), '-c', 'copy', '-movflags', '+faststart', workingPath], {

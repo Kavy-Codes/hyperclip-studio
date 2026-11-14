@@ -102,6 +102,11 @@ if [[ "$CAPTIONS" -eq 1 && "$TRANSCRIBE" -eq 1 ]]; then
   node "$ROOT/scripts/make-captions.mjs" "$SLUG"
 fi
 
+if [[ -x "$ROOT/scripts/mix-sound.sh" ]]; then
+  echo "Generating broadcast audio mix (Edit-Kit Sound Engine)..."
+  "$ROOT/scripts/mix-sound.sh" "$SLUG" || echo "[WARN] Auto sound mix skipped."
+fi
+
 echo
 echo "Project ready: $ROOT/projects/$SLUG"
 echo "Preview:"

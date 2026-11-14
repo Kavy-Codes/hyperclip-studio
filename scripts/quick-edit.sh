@@ -29,9 +29,14 @@ fi
 
 "$ROOT/scripts/new-edit.sh" "$@"
 "$ROOT/scripts/check-clip.sh" "$SLUG"
+
+echo "Generating instant visual preview..."
+"$ROOT/scripts/ai-preview.sh" "$SLUG" --scale 1/4 || true
+
 "$ROOT/scripts/render-clip.sh" "$SLUG"
 
 echo
-echo "Draft ready: $ROOT/projects/$SLUG/renders/"
-echo "Review the full draft, then:"
+echo "Preview sheet: $ROOT/projects/$SLUG/.preview/contact-sheet-1-4.jpg"
+echo "Draft ready:   $ROOT/projects/$SLUG/renders/"
+echo "Review the visual sheet and full draft, then:"
 echo "  ./scripts/render-clip.sh $SLUG --final"

@@ -20,7 +20,16 @@ projects/*/.preview/
 projects/*/renders/
 projects/*/*.mp4
 
-# Retain demo assets
+# Python caches & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# Intermediate audio & video stems
+projects/*/assets/audio/*.wav
+projects/*/assets/working*.mp4
 !projects/demo/assets/working.mp4
 !projects/demo/assets/gsap.min.js
 !projects/demo/assets/audio/music_bed.m4a
@@ -32,4 +41,12 @@ projects/*/*.mp4
 # Logs & temp
 *.log
 .DS_Store
+Thumbs.db
 .env
+.env.*
+!.env.example
+.preview/
+test_*
+*.tmp
+*.temp
+
